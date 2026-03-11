@@ -1,0 +1,4 @@
+username=python_user
+theme=dark
+font_size=12
+notifications=True
