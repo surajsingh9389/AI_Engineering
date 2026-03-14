@@ -1,3 +1,7 @@
+# In Object-Oriented Programming (OOP), encapsulation is the practice of bundling an object's data (attributes) and the methods (functions) that operate on that data into a single unit, known as a class
+# The primary purpose of encapsulation is to restrict direct access to the internal state of an object, a concept often referred to as data hiding.
+
+
 class BankAccount: 
     def __init__(self, owner, initial_balance=0):
         self.owner = owner

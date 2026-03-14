@@ -1,3 +1,5 @@
+# Inheritance in Object-Oriented Programming (OOP) is a mechanism where a new class (child/derived class) acquires the properties and methods of an existing class (parent/base class).
+
 # # parent class
 # class Animal: 
 #     def __init__(self, name, age):
