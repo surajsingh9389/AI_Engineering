@@ -16,7 +16,7 @@
 from github_api import get_repo_data
 from formatter import format_repo
 
-repo_name = "ai-repo"
+repo_name = input("Enter repo (owner/repo): ")
 data = get_repo_data(repo_name)
 
 stars = data["stars"]

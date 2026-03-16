@@ -1,4 +1,4 @@
-"""API Call using requests module"""
+"""API Call using requests"""
 
 import requests
 
