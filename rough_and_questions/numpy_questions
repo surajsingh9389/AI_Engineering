@@ -1,0 +1,70 @@
+# Practice Question
+
+# Q1 = instead of using for loop numpy use vectorization.
+
+# Q2. = if return a 3x3 matrix with all values are zero [[0, 0, 0], [0, 0, 0], [0, 0, 0]].
+
+# Q3 = array.shape provide the dimenson of the numpy array. and array.size proivde the 3*3 size of the array how many values are in the array.
+
+
+Task 3 = import numpy as np 
+
+v = np.array([0.2, 0.8, 0.1, 0.9])
+
+magnitude = np.linalg.norm(v)
+
+normalized_v = v/magnitude
+
+print(np.linalg.norm(normalized_v)) 
+
+Task 4 - 
+
+a = [1, 2, 3]
+b = [4, 5, 6]
+
+
+print(np.dot(a, b)) # 32
+
+Task 5 - to remove the noinse from the vectors because there size can be differ but they point to the same direction
+
+
+Practice Questions - 
+
+Q1 - a*b just multiply two vector and give another resulting vector, But the np.dot(a, b) after multiplying two vector give the total sum of the resulting vector values, means single value as output.
+
+Q2. return s 2x3 dimension array all containing ones.
+
+my question is how much numpy is needed for the ai engineering and what we learn up to now and what remaining in numpy
+
+
+What You STILL Need (Important)
+1️⃣ Axis operations
+np.sum(arr, axis=0)
+np.mean(arr, axis=1)
+
+Used in:
+
+data processing
+embedding aggregation
+batch operations
+2️⃣ Reshaping
+arr.reshape(3,2)
+
+Used in:
+
+model inputs
+vector transformations
+3️⃣ Indexing / Filtering
+arr[arr > 5]
+
+Used in:
+
+data cleaning
+threshold filtering
+4️⃣ Random vectors
+np.random.rand(5)
+
+Used in:
+
+initialization
+testing embeddings
