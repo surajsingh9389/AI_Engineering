@@ -9,16 +9,7 @@ def compute_cosine_similarity(a, b):
     
     dot_product = np.dot(a, b)
     
-    return dot_product/(magnitude_a*magnitude_b)
-
-def find_best_score_idx(scores):
-    max_score_idx = 0  
-    
-    for i, score in enumerate(scores, 0):
-        if(score>scores[max_score_idx]):
-            max_score_idx = i
-    
-    return max_score_idx        
+    return dot_product/(magnitude_a*magnitude_b)      
     
  
 def calculate_scores(query_vector, sentence_vectors):
@@ -30,15 +21,51 @@ def calculate_scores(query_vector, sentence_vectors):
         
     return scores    
     
+
+# def get_top_matches(scores):
+#     new_scores = sorted(enumerate(scores), key=lambda x: x[1], reverse=True)
+    
+#     return new_scores
+
+def get_top_k(scores, k):
+    if k == 0 or k > len(scores): 
+        return []
+    
+    new_scores = sorted(enumerate(scores), key=lambda x: x[1], reverse=True)
+    
+    return new_scores[:k]
+        
     
 
-def semantic_search(query_vector, sentence_vectors, sentences):
+def semantic_search(query_vector, sentence_vectors, sentences, k):
     scores =  calculate_scores(query_vector, sentence_vectors)
 
-    best_matching_score_idx = find_best_score_idx(scores)
+    # top_matches = get_top_matches(scores)
     
-    print(sentences[best_matching_score_idx]) # I love machine learning
-    print(scores) # [0.9799578870122228, 0.5962847939999439, 0.9622504486493763, 0.8944271909999159]
+    # top1 = top_matches[0]
+    # top2 = top_matches[1]
+    
+    # for best sentence and best sentence score 
+    # print(sentences[top1[0]])
+    # print(scores) 
+    # print(scores[top1[0]])
+    
+    top_matches = get_top_k(scores, k)
+    top_matches_with_score = []
+    
+    for pair in top_matches:
+        idx = pair[0]
+        score = pair[1]
+        
+        top_matches_with_score.append((sentences[idx], score))
+    
+    return top_matches_with_score
+
+    # return [
+    #     (sentences[top1[0]], top1[1]),
+    #     (sentences[top2[0]], top2[1]),
+    # ]
+
         
     
 sentence_vectors = [
@@ -57,21 +84,8 @@ sentences = [
 
 query_vector = np.array([1,2,2])
 
-semantic_search(query_vector, sentence_vectors, sentences)
+k = int(input("How many top matches you want?: "))
 
+top_result  = semantic_search(query_vector, sentence_vectors, sentences, k)
+print(top_result)
 
-# -------------------------------------------------
-
-# Q1. Why do we use cosine similarity instead of direct comparison.
-# Ans = if use direct comparison they compare by there weight or magnitude not by there direction, on the other hand cosine similarity compare using direction. 
-
-# Q2. time complexity fo semantic search
-# Ans = let sentence_vectors is nxm based on this 
-#     compute_cosine_similarity is O(m)
-#     calculate_scores is O(nxm)
-#     find_best_score_idx is O(n) 
-    
-#     so the time complexity of semantic search is O(nxm) + O(n)
-
-# Q3. How can this become slow with 1 million vectors?
-# store normaalized vectors avoid recomputing magnitude 
