@@ -57,3 +57,19 @@
 # Q3
 # What is one limitation of your current semantic search system?
 # Ans = the two sentence which are not similar but there vectors are same can cause problem in my current semantic search system.
+
+# ------------------------------------------
+
+
+# Q1
+# Why is O(n log k) better than O(n log n) in your case?
+# Ans = O(n log n) sorts the entire list, O(n log n) sorts the entire list
+
+# Q2
+# What will happen if we normalize all vectors before storing them?
+# Ans - remove the number of operation require to calculate cosine similarity which improve the time complexity.
+
+# Q3
+# If dataset becomes 1 million vectors, what breaks in your system?
+
+# Ans - comparing in 1 million vectors linearly takes lots of time, the system stuck on comparing the vector
