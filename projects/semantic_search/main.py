@@ -1,94 +1,49 @@
 import numpy as np
 import heapq
+from google import genai
+import os
+from dotenv import load_dotenv
 
-# def compute_similarity(a, b):
-#     # magnitude_a = np.linalg.norm(a)
-#     # magnitude_b = np.linalg.norm(b)
-    
-#     # if magnitude_a == 0 or magnitude_b == 0:
-#     #     return 0
-    
-#     # dot_product = np.dot(a, b)
-    
-#     # return dot_product/(magnitude_a*magnitude_b)   
-    
-#     return np.dot(a, b)   
-    
- 
-# def calculate_scores(query_vector, sentence_vectors):
-#     scores = []
-#     for vector in sentence_vectors:
-#         current_vector_cs = compute_similarity(query_vector, vector)
-        
-#         scores.append(current_vector_cs)
-        
-#     return scores    
-    
+# 1. Load your .env file
+load_dotenv()
 
-# def get_top_matches(scores):
-#     new_scores = sorted(enumerate(scores), key=lambda x: x[1], reverse=True)
+# 2. Initialize the client
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+
+
+def get_embedding(text):
     
-#     return new_scores
+    result = client.models.embed_content(
+    model="gemini-embedding-001",
+    contents=text
+    ) 
+
+    return np.array(result.embeddings[0].values)
+
 
 def get_top_k(scores, k):
     if k == 0 or k > len(scores): 
         return []
     
-    # new_scores = sorted(enumerate(scores), key=lambda x: x[1], reverse=True)
-    
     new_scores = heapq.nlargest(k, enumerate(scores), key=lambda x: x[1])
     
-    return new_scores
-        
-def get_normalize_vector(vector):
-    vector_magnitude = np.linalg.norm(vector)
-    
-    if vector_magnitude == 0:
-        return vector
-    
-    return vector/vector_magnitude 
+    return new_scores 
    
 
-def semantic_search(normalize_query_vector, normalize_sentence_vectors, sentences, k):
+def semantic_search(query_embedding, sentence_embeddings, sentences, k):
     
-    # scores =  calculate_scores(normalize_query_vector,normalize_sentence_vectors)
+    # Normalize 
+    normalize_sentence = [v /np.linalg.norm(v) for v in sentence_embeddings]
+    normalize_query = query_embedding/np.linalg.norm(query_embedding)
     
-    scores = [np.dot(normalize_query_vector, v) for v in normalize_sentence_vectors]
+    # Similarity 
+    scores = [np.dot(normalize_query, v) for v in normalize_sentence]
 
-    # top_matches = get_top_matches(scores)
-    
-    # top1 = top_matches[0]
-    # top2 = top_matches[1]
-    
-    # for best sentence and best sentence score 
-    # print(sentences[top1[0]])
-    # print(scores) 
-    # print(scores[top1[0]])
-    
     top_matches = get_top_k(scores, k)
-    top_matches_with_score = []
     
-    for pair in top_matches:
-        idx = pair[0]
-        score = pair[1]
-        
-        top_matches_with_score.append((sentences[idx], score))
-    
-    return top_matches_with_score
+    return [(sentences[i], score) for i, score in top_matches]
 
-    # return [
-    #     (sentences[top1[0]], top1[1]),
-    #     (sentences[top2[0]], top2[1]),
-    # ]
 
-        
-    
-sentence_vectors = [
- np.array([1,2,3]),
- np.array([2,1,0]),
- np.array([3,3,3]),
- np.array([0,1,2])
-]
 
 sentences = [
  "I love machine learning",
@@ -97,15 +52,17 @@ sentences = [
  "Football is a great sport"
 ]
 
-query_vector = np.array([1,2,2])
-
-normalize_sentence_vectors = [get_normalize_vector(v) for v in sentence_vectors]
-    
-normalize_query_vector = get_normalize_vector(query_vector)
+query = "I love Ai"
 
 k = int(input("How many top matches you want?: "))
 
-top_result  = semantic_search(normalize_query_vector, normalize_sentence_vectors, sentences, k)
+# Convert all sentences -> embeddings 
+sentence_embeddings = [get_embedding(s) for s in sentences]
 
-print(top_result)
+# Query embedding 
+query_embedding = get_embedding(query)
+        
+top_matches = semantic_search(query_embedding, sentence_embeddings, sentences, k)
+
+print(top_matches)
 
