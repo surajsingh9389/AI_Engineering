@@ -73,3 +73,19 @@
 # If dataset becomes 1 million vectors, what breaks in your system?
 
 # Ans - comparing in 1 million vectors linearly takes lots of time, the system stuck on comparing the vector
+
+# ------------------------
+
+# Q1. Why are embeddings 1536 dimensions instead of 3?
+# Ans = the dimensions represent the different meaning level, means the sentence contain different attribute of meaning thats there are that many dimension 
+
+# Q2. Why is API-based embedding slower than your previous NumPy system?
+
+# Ans = Main reason = network + model computation, Api call over internet, Response time
+
+# NumPy → local + simple math (fast)
+# API → remote + deep model (slow but meaningful)
+
+
+# Q3. What happens if you don’t normalize embeddings?
+# Ans = Dot product gets influenced by magnitude, not just meaning, Normalization ensures similarity depends only on direction (meaning)
