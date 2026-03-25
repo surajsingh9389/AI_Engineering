@@ -63,4 +63,6 @@ for i in indices[0]:
 
 
 
-# also i want to know when converting embedding to float32 we changing it to np.array() but when i return from get_embeddings already convert it numpy array i think it throw error right.
+# Faiss is a library, not a full-fledged database system. Faiss (The Engine): Provides the raw power to perform high-speed mathematical searches and indexing. does not provide metadata storage, Real CRUD, Built-in Persistence, Multi-user Access.
+
+# Use Faiss (Library) if you are building a prototype, conducting research, or have a static dataset where you want maximum speed with minimal overhead.
