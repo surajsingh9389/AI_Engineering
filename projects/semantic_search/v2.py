@@ -22,25 +22,6 @@ def get_embedding(text):
 
     return np.array(result.embeddings[0].values).astype('float32')
 
-# LLM Response Funtion 
-def generate_answer(context, query):
-    prompt = f"""
-    Answer the question using ONLY the context below.
-
-    Context:
-    {context}
-
-    Question:
-    {query}
-    """
-
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=prompt
-    )
-
-    return response.text
-
 
 # def get_top_k(scores, k):
 #     if k == 0 or k > len(scores): 
@@ -123,6 +104,7 @@ query = input("Enter your search query: ")
 k = int(input("How many top matches you want?: "))
 
 query_embedding = get_embedding(query)
+print(query_embedding)
 
 normalized_query = safe_normalize(query_embedding)
 
@@ -130,18 +112,8 @@ normalized_query = np.array([normalized_query]).astype('float32')
 
 distances, indices = index.search(normalized_query, k)
 
-# for i, idx in enumerate(indices[0]):
-#     print(f"{i+1}. {sentences[idx]} (score: {distances[0][i]:.4f})")
-    
-    
-# Retrieve context 
-retrieved_sents = [sentences[i] for i in indices[0]]
-                   
-context = '\n'.join(retrieved_sents)
-
-# Generate Answer 
-answer = generate_answer(context, query)
-print(answer)                            
+for i, idx in enumerate(indices[0]):
+    print(f"{i+1}. {sentences[idx]} (score: {distances[0][i]:.4f})")
 
 
 # Note: Why indexFaltIP, IP = Inner product = dot product, since we normalized vectors dot product = cosine similarity.
