@@ -1,33 +1,7 @@
-#####  Semantic Search (Like ChatGPT Retrieval)
-
-# You have sentences:
-
-# sentences = [
-#  "I love machine learning",
-#  "Python is great for backend",
-#  "AI is the future",
-#  "Football is a great sport"
-# ]
-
-# User query 
-
-# query = "I like AI"
-
-
-# Goal Find Most similar sentence to query
-
-# -----------------------------------------------------------------
-
-
-##### Architecture (VERY IMPORTANT)
-
-# sentences
+# User Query
 #    ↓
-# convert to vectors
+# Find relevant documents (FAISS)
 #    ↓
-# compare with query (cosine similarity)
+# Send them to LLM
 #    ↓
-# rank results
-#    ↓
-# return best match
-
+# LLM generates final answer
