@@ -1,7 +1,7 @@
 
 def chunk_text(text):  
     
-    if len(text) == 0:
+    if not text:
         return []
       
     # Sentences Building 
