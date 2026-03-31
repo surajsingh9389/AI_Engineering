@@ -1,10 +1,5 @@
-
-def chunk_text(text):  
-    
-    if not text:
-        return []
-      
-    # Sentences Building 
+# Sentences Building Function
+def build_sentences(text):
     delimiters = [".", "?", "!"]
     sentences = []
     start = 0
@@ -16,33 +11,49 @@ def chunk_text(text):
         elif i == len(text)-1:
             sentences.append(text[start: i+1])
     
+    return sentences
+
+# Generate chunks list function 
+def create_chunk(sentences, k):
+    
     if not sentences:
         return []
     
-    # Chunking Logic 
     chunk_limit = 300
     chunks_list = []
     
-    current_chunk = sentences[0]
-    current_chunk_len = len(current_chunk.split())
+    current_chunk_list = [sentences[0]]
     
     for i in range(1, len(sentences)):
         sentence = sentences[i]
         sentence_len = len(sentence.split())
+        current_chunk_len = sum(len(s.split()) for s in current_chunk_list)
         
         if current_chunk_len + sentence_len > chunk_limit:
-            chunks_list.append(current_chunk)
-            current_chunk = sentence
-            current_chunk_len = sentence_len
+            chunks_list.append(" ".join(current_chunk_list))
+            current_chunk_list = current_chunk_list[-k:] + [sentence]                
+                
         else:
-            current_chunk += " " + sentence
-            current_chunk_len += sentence_len
+            current_chunk_list.append(sentence)
             
-    chunks_list.append(current_chunk)
-            
-            
+    chunks_list.append(" ".join(current_chunk_list))
+    
     return chunks_list
 
+def chunk_text(text):  
+    
+    if not text:
+        return []
+      
+    sentences = build_sentences(text)
+    
+    if not sentences:
+        return []
+    
+    k = 1
+    chunks_list = create_chunk(sentences, k)
+                        
+    return chunks_list
     
 text = """The abyssopelagic zone, or the "abyss," remains one of the final frontiers of human discovery. This vast, silent realm begins at four thousand meters below the ocean surface, where sunlight is a forgotten memory and the pressure is equivalent to an elephant standing on a postage stamp. To understand the abyss is to understand the resilience of biological life under extreme duress. While the terrestrial world is governed by the rhythm of the sun, the deep ocean operates on a geological clock, fueled by the slow drift of marine snow—organic detritus falling from the productive upper layers of the sea.
 In the late twentieth century, the discovery of hydrothermal vents revolutionized our understanding of biology. These underwater geysers, spewing mineral-rich water heated by the Earth’s magma, support entire ecosystems independent of photosynthesis. Instead, specialized bacteria utilize chemosynthesis, converting chemical energy from hydrogen sulfide into organic matter. This process supports giant tube worms, eyeless shrimp, and ghostly white crabs. The existence of these life forms suggests that life could potentially thrive on icy moons like Europa or Enceladus, where subsurface oceans are kept liquid by tidal heating.
