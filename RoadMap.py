@@ -7,8 +7,7 @@
 # PHASE 1: RAG FOUNDATION IMPROVEMENT
 
 # ✅ Chunking strategies
-# Embedding optimization
-# Retrieval tuning
+# ✅ Embedding optimization
 
 # Project:
 

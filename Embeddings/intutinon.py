@@ -43,3 +43,13 @@
 # 2. Forgot Password: "Users can reset their password using email verification."
 
 
+# Q. Why should we NOT embed query and document in exactly the same way? 
+# ans = Queries and documents serve different purposes.
+# A query represents intent and is usually short, while a document represents knowledge and is more detailed.
+
+# If both are embedded in the same way:
+
+# Queries may lack enough context to match rich documents effectively
+# Documents may contain too much information, diluting relevance
+
+# This mismatch leads to poor similarity scoring and weaker retrieval performance.
