@@ -28,8 +28,46 @@ class ChunkingPipeline:
         
         return sentences
     
+    
     def create_chunks(self, sentences):
-        return []
+        # input validation 
+        if not sentences: 
+            return []
+        
+        chunks_list = []
+        word_limit = self.chunk_size
+        
+        # Stores current chunk as list of sentences
+        current_chunk_list = []
+        
+        # Tracks total word count of current chunk
+        word_count = 0
+        
+        for sentence in sentences:
+            sentence_word_count = len(sentence.split())
+            
+            # Check if adding this sentence exceeds chunk size
+            if word_count + sentence_word_count > word_limit:
+                
+                # Save current chunk if not empty
+                if current_chunk_list:
+                    chunks_list.append(" ".join(current_chunk_list))
+                    
+                # Apply overlap: take last k sentences and add current sentence
+                current_chunk_list = current_chunk_list[-self.overlap_k:] + [sentence]
+                
+                # Recalculate word count for new chunk
+                word_count = sum(len(s.split()) for s in current_chunk_list)
+            else:
+                # Add sentence to current chunk
+                current_chunk_list.append(sentence)
+                word_count+=sentence_word_count
+                
+        # Append final chunk        
+        if current_chunk_list:
+            chunks_list.append(" ".join(current_chunk_list))
+            
+        return chunks_list
     
     
 text = """The abyssopelagic zone, or the "abyss," remains one of the final frontiers of human discovery. This vast, silent realm begins at four thousand meters below the ocean surface, where sunlight is a forgotten memory and the pressure is equivalent to an elephant standing on a postage stamp. To understand the abyss is to understand the resilience of biological life under extreme duress. While the terrestrial world is governed by the rhythm of the sun, the deep ocean operates on a geological clock, fueled by the slow drift of marine snow—organic detritus falling from the productive upper layers of the sea.
