@@ -11,7 +11,7 @@
 
 # Project:
 
-# Build a document search system with proper chunking
+# ✅  Build a document search system with proper chunking
 
 # PHASE 2: RETRIEVAL QUALITY
 # 4. Hybrid search (BM25 + vector)
