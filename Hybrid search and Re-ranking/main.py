@@ -1,9 +1,9 @@
 from rank_bm25 import BM25Okapi
 import faiss
-from sentence_transformers import SentenceTransformer
+from sentence_transformers import SentenceTransformer, CrossEncoder
 import numpy as np
 
-# Using Bm25 the top matching
+# ------------ Using Bm25 the top matching ---------------
 
 docs = [
   "Samsung return policy is 10 days",
@@ -27,13 +27,13 @@ doc_scores = bm25.get_scores(tokenized_query)
 top_n = bm25.get_top_n(tokenized_query, docs, n=3)
 
 bm25_results = top_n
-print(bm25_results)
+# print(bm25_results)
 
 # print(f"Scores: {doc_scores}")
 # print(f"Best Match: {top_n}")
 
 
-# Using Faiss the top matching 
+# --------------- Using Faiss the top matching ----------------
 
 # 1. Load a model
 model = SentenceTransformer('all-MiniLM-L6-v2')
@@ -60,12 +60,14 @@ distance, indices= index.search(embedding_query, k)
 
 faiss_results = [docs[i] for i in indices[0]]
 
-print(faiss_results)
+# print(faiss_results)
 
 # for j, i in enumerate(indices[0]):
 #   print(f"score: {distance[0][j]}, sentence: {docs[i]}")
 
-# RRf algorithm
+
+# ------------- RRf algorithm ----------------
+
 def rrf(bm25_results, faiss_results, k=60):
   scores={}
   
@@ -78,6 +80,26 @@ def rrf(bm25_results, faiss_results, k=60):
     scores[doc] = scores.get(doc, 0) + 1/(rank+k)
     
   return sorted(scores.items(), key=lambda item: item[1], reverse=True)
-  
-print(rrf(bm25_results, faiss_results))
+
+
+hybrid_results = rrf(bm25_results, faiss_results)
+
+print(f"Hybrid Results: {hybrid_results}")
+
+# ------------- Re-Ranking ----------------
+
+# Convert into pairs(query, retrieve_docs)
+pairs = [(query, retrieve_docs[0]) for retrieve_docs in hybrid_results]
+
+print(f"Query + docs: {pairs}")
+
+# Load model 
+model = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')
+
+# calculate scores for re-ranking 
+scores = model.predict(pairs)
+
+sorted_docs = sorted(zip(pairs, scores), key=lambda x: x[1], reverse=True)
+
+print(f"After Re-Ranking docs and scores: {sorted_docs}")
 
