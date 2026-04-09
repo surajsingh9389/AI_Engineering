@@ -11,7 +11,7 @@ docs = [
   "iPhone 15 refund policy is 7 days"
 ]
 
-query = "return window apple phone"
+query = "What is the return policy for an Apple iPhone?"
 
 # BM25 expects a list of lists (each list contains words)
 tokenized_corpus = [doc.lower().split() for doc in docs]
@@ -89,7 +89,7 @@ print(f"Hybrid Results: {hybrid_results}")
 # ------------- Re-Ranking ----------------
 
 # Convert into pairs(query, retrieve_docs)
-pairs = [(query, retrieve_docs[0]) for retrieve_docs in hybrid_results]
+pairs = [(query, doc) for doc, _ in hybrid_results]
 
 print(f"Query + docs: {pairs}")
 
@@ -99,7 +99,7 @@ model = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')
 # calculate scores for re-ranking 
 scores = model.predict(pairs)
 
-sorted_docs = sorted(zip(pairs, scores), key=lambda x: x[1], reverse=True)
+sorted_docs = sorted(zip([doc for doc, _ in hybrid_results], scores), key=lambda x: x[1], reverse=True)
 
 print(f"After Re-Ranking docs and scores: {sorted_docs}")
 
