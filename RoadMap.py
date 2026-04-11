@@ -14,12 +14,12 @@
 # ✅  Build a document search system with proper chunking
 
 # PHASE 2: RETRIEVAL QUALITY
-# 4. Hybrid search (BM25 + vector)
-# 5. Re-ranking
+# 4.✅ Hybrid search (BM25 + vector)
+# 5.✅ Re-ranking
 
 # Project:
 
-# Improve search accuracy using hybrid retrieval or Recomendation system
+# ✅ Advance_search_engine
 
 # PHASE 3: LLM ENGINEERING
 # 6. Prompt engineering
