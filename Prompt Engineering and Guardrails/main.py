@@ -1,7 +1,8 @@
 from rank_bm25 import BM25Okapi
 import faiss
 from sentence_transformers import SentenceTransformer, CrossEncoder
-from transformers import pipeline
+from huggingface_hub import InferenceClient
+import os
 import numpy as np
 
 # ------------ Using Bm25 the top matching ---------------
@@ -9,10 +10,12 @@ import numpy as np
 docs = [
   "Samsung return policy is 10 days",
   "Refunds are processed within 5 days",
-  "iPhone 15 refund policy is 7 days"
+  "iPhone 15 refund policy is 7 days",
+  "The Amazon river is the largest by discharge volume.",
+  "Amazon.com is a leading e-commerce company."
 ]
 
-query = "What is the price of iphone?"
+query = "How long does iPhone refund take?"
 
 # BM25 expects a list of lists (each list contains words)
 tokenized_corpus = [doc.lower().split() for doc in docs]
@@ -102,38 +105,67 @@ scores = model.predict(pairs)
 
 sorted_docs = sorted(zip([doc for doc, _ in hybrid_results], scores), key=lambda x: x[1], reverse=True)
 
-# print(f"After Re-Ranking docs and scores: {sorted_docs}")
+print(f"After Re-Ranking docs and scores: {sorted_docs}")
 
 
-def build_prompt(query, context):
-    prompt = f"""
-    You are a helpful assistant, Your task is to answer the question using only the Provided context below.
-    if no answer found say i don't know.
+def build_prompt(context):
+  
+  prompt = f"""
+You are a strict question-answering assistant.
+
+Rules:
+1. Answer ONLY using the provided context.
+2. Do NOT use any external knowledge.
+3. If the answer is not explicitly present in the context, respond with EXACTLY:
+   "I don't know"
+4. Do NOT explain your answer.
+5. Do NOT add any extra text.
+
+Context:
+{context}
+"""
     
-    Context:
-    {context}
-    
-    Question:
-    {query}
-    
-    Answer:
-    """
-    
-    return prompt
+  return prompt
 
 # Retrieve context 
 retrieve_docs = [doc for doc, _ in sorted_docs]
 context = "\n".join(retrieve_docs)
 
 # Generate prompt 
-prompt = build_prompt(query, context)
-
-# Load the model (using a small instruct model for better constraint following)
-generator = pipeline("text-generation", model="Qwen/Qwen2.5-0.5B-Instruct")
-
-# Generate the response
-result = generator(prompt, max_new_tokens=50, max_length=None)
-# print(result)
-print(result[0]['generated_text'])
+prompt = build_prompt(context)
 
 
+# Your Read Token from: https://huggingface.co
+HF_TOKEN = os.getenv("TOKEN")
+
+# Initialize the client with your API token
+client = InferenceClient(api_key=HF_TOKEN)
+
+def generate_rag_answer(user_query, prompt):
+    # The 'best way' is using the OpenAI-compatible chat interface
+    model_id = "deepseek-ai/DeepSeek-V3" 
+    
+    messages = [
+        {
+            "role": "system", 
+            "content": prompt
+        },
+        {
+            "role": "user", 
+            "content": user_query
+        }
+    ]
+
+    response = client.chat.completions.create(
+        model=model_id,
+        messages=messages,
+        max_tokens=100,
+        temperature=0.0, # Lower temperature is better for factual RAG
+        stop=["\n"]
+    )
+    
+    return response.choices[0].message.content
+
+
+answer = generate_rag_answer(query, prompt)
+print(f"Generated Answer:\n{answer}")
